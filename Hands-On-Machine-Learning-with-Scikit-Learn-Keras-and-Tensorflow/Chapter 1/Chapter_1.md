@@ -61,3 +61,14 @@ Ví dụ, logistics regression có output là một số (như 20% tỷ lệ b�
 Hơn nữa, ***features*** cũng có thể được gọi là ***predictors*** hoặc ***attributes***.
 
 #### Unsupervised learning
+**Unsupervised learning** là khi máy sẽ học tập training data mà không được gắn label.\
+Ví dụ, ta có rất nhiều data về các visitors một chiếc blog. Chúng ta có thể chạy một thuật toán ***clustering*** để phát hiện các group giống nhau.\
+![alt text](image-6.png)\
+Khi sử dụng **Unsupervised learning**, không có lúc nào chúng ta nói cho thuật toán biết group mà visitor thuộc về mà chúng sẽ tự tìm connections. \
+Ví dụ, máy sẽ nhận ra 40% visitors là teenagers thích đọc sách comic và thường đọc blog của bạn sau khi đi học; 20% là người lớn thích sci-fi và đọc vào cuối tuần. Từ đó, ta có thể tập trung vào nhóm visitors cần hướng tới. \
+![alt text](image-7.png)\
+Thuật toán ***Visualization*** là một ví dụ tốt về **Unsupervised learning**. Chúng ta đưa các data phức tạp và không gắn label và máy sẽ trả ra một plot 2D hoặc 3D. Thuật toán sẽ cố gắng giữ nguyên các nhiều cấu trúc có thể (ví dụ như giữ các cụm riêng biệt trong input không chồng chéo khi trực quan hóa) để chúng ta dễ dàng nhìn data và nhận ra các patterns rõ ràng hơn.\
+Một task liên quan là ***dimensionality reduction***, khi mục tiêu của chúng là đơn giản hóa data mà không làm mất quá nhiều thông tin. Một cách đó là việc merge các features liên quan nhau thành 1 feature. \
+Ví dụ, chiều rộng và chiều dài của nhà merge thành diện tích; số km xe đi và độ tuổi của xe có correlation mạnh với nhau để chuyển feature về độ mài mòn của xe. Đó gọi là ***feature extraction***.\
+![alt text](image-8.png)\
+Một tip sách đề cập là nên reduce số lượng dimensions thông qua dùng ***dimensionality reduction*** trước khi cho vào một thuật toán ML nào. Việc giảm dimensions sẽ giúp ta giữ các dimensions có ảnh hưởng lớn, từ đó giúp máy chạy nhanh hơn, tốn ít memory hơn và cũng perform tốt hơn nữa.\
