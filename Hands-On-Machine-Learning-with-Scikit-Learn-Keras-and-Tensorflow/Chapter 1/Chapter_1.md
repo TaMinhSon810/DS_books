@@ -62,7 +62,7 @@ Hơn nữa, ***features*** cũng có thể được gọi là ***predictors*** h
 
 #### Unsupervised learning
 **Unsupervised learning** là khi máy sẽ học tập training data mà không được gắn label.\
-Ví dụ, ta có rất nhiều data về các visitors một chiếc blog. Chúng ta có thể chạy một thuật toán ***clustering*** để phát hiện các group giống nhau.\
+Ví dụ, ta có rất nhiều data về các visitors một trang blog. Chúng ta có thể chạy một thuật toán ***clustering*** để phát hiện các group giống nhau.\
 ![alt text](image-6.png)\
 Khi sử dụng **Unsupervised learning**, không có lúc nào chúng ta nói cho thuật toán biết group mà visitor thuộc về mà chúng sẽ tự tìm connections. \
 Ví dụ, máy sẽ nhận ra 40% visitors là teenagers thích đọc sách comic và thường đọc blog của bạn sau khi đi học; 20% là người lớn thích sci-fi và đọc vào cuối tuần. Từ đó, ta có thể tập trung vào nhóm visitors cần hướng tới. \
@@ -71,4 +71,41 @@ Thuật toán ***Visualization*** là một ví dụ tốt về **Unsupervised l
 Một task liên quan là ***dimensionality reduction***, khi mục tiêu của chúng là đơn giản hóa data mà không làm mất quá nhiều thông tin. Một cách đó là việc merge các features liên quan nhau thành 1 feature. \
 Ví dụ, chiều rộng và chiều dài của nhà merge thành diện tích; số km xe đi và độ tuổi của xe có correlation mạnh với nhau để chuyển feature về độ mài mòn của xe. Đó gọi là ***feature extraction***.\
 ![alt text](image-8.png)\
-Một tip sách đề cập là nên reduce số lượng dimensions thông qua dùng ***dimensionality reduction*** trước khi cho vào một thuật toán ML nào. Việc giảm dimensions sẽ giúp ta giữ các dimensions có ảnh hưởng lớn, từ đó giúp máy chạy nhanh hơn, tốn ít memory hơn và cũng perform tốt hơn nữa.\
+Một tip sách đề cập là nên reduce số lượng dimensions thông qua dùng ***dimensionality reduction*** trước khi cho vào một thuật toán ML nào. Việc giảm dimensions sẽ giúp ta giữ các dimensions có ảnh hưởng lớn, từ đó giúp máy chạy nhanh hơn, tốn ít memory hơn và cũng perform tốt hơn nữa.
+
+## Day 2 (21/2/2024)
+Một task cũng liên quan mà sách đề cập là ***anomaly detection***. \
+Ví dụ: Phát hiện giao dịch bất thường để ngăn chặn gian lận, phát hiện lỗi sản phẩm hay tự động loại bỏ các outliers trong dataset trước khi cho học thuật toán. \
+Trong quá trình training, hệ thống sẽ được học hầu hết là các instance bình thường và máy sẽ học để nhận biết chúng. Và sau đó khi nhìn một instance mới, máy có thể nói liện instance này là bình thường hay bất thường.\
+![alt text](image-9.png)\
+Một task phổ biển trong **Unsupervised learning** mà sách đề cập là ***association rule learning***, khi mục tiêu của chúng là đào sâu vào data và phát hiện ra những interesting relations giữa các attributes.\
+VD giả sử như bạn có một siêu thị. Khi sử dụng task xem nhật ký bán hàng, bạn sẽ nhận ra là những người mua sốt barbecue và khoai tây thì cũng hay mua thịt bò. Do đó, bạn có thể sắp xếp để các mặt hàng đó gần nhau hơn.\
+
+#### Semi-supervised learning
+Do việc labelling data tốn nhiều thời gian và công sức, chúng ta thường sẽ có rất nhiều instances không được labelling và ít instances được labelling. Đây gọi là **Semi-supervised learning**.
+![alt text](image-10.png)\
+Một vài service hosting photo như Google Photos là một ví dụ khá hay cho **Semi-supervised learning**. Một khi chúng ta upload toàn bộ ảnh chụp gia đình lên trên service, máy sẽ tự động nhận ra người A có trong ảnh 1, 5 và 11 trong khi người B có trong ảnh 2, 5 và 7. \
+-> Đây là phần unsupervised trong thuật toán. 
+Giờ tất cả những gì máy cần đó là bạn nói cho máy đây là ai. Thêm label cho từng người (VD: Bố là người A, mẹ là người B) và máy sẽ có thể điền tên toàn bộ mn trong bức ảnh. Điều này giúp ích rất nhiều trong việc searching hình ảnh.\
+
+Hầu hết thuật toán của **semi-supervised learning** là sự kết hợp giữa thuật toán unsupervised và supervised. \
+Ví dụ, thuật toán clustering nhóm các instances giống nhau vào 1 group, và các instance chưa được label sẽ được label theo label phổ biến nhất trong từng cluster. Và một khi toàn bộ data được label hết, ta có thể sử dụng dễ dàng **supervised learning**.\
+
+#### Self-supervised learning
+Một cách tiếp cận ML khác đó là tạo toàn bộ dataset được label từ tập dataset hoàn toàn không được label. Và đương nhiên, một khi dataset được label thì ta có thể dùng được các thuật toán **supervised learning**. Đây gọi là **self-supervised learning**.\
+Ví dụ, bạn có một dataset hình ảnh chưa được label vô cùng lớn. Bạn có thể chọn ngẫu nhiên một phần nhỏ hình ảnh và train model để recover toàn bộ hình ảnh. Trong quá trình training, ảnh được che mặt nạ đen là input cho model và hình ảnh gốc sử dụng như label. \
+![alt text](image-11.png)\
+Mô hình kết quả có thể hữu ích với chính nó, ví dụ có thể sửa được hình ảnh lỗi hoặc loại bỏ những objects không mong muốn trong ảnh. Tuy nhiên, một model dùng **self-supervised learning** thường không phải là mục tiêu cuối cùng của chúng ta. Chúng ta thường tinh chỉnh lại cho 1 task khác mà bạn thực sự mong muốn.
+
+Ví dụ, giả sử bạn có một pet classification model với mục tiêu: Đưa một ảnh của 1 con pet bất kỳ, máy sẽ nói con pet đó chính xác là con vật nào.\
+Nếu bạn có rất nhiều hình ảnh pet khác nhau nhưng chưa được label, bạn có thể bắt đầu việc train một image-repairing model sử dụng **self-supervised learning**. Một khi mô hình chạy tốt, bạn có thể phân biệt được các loại pet khác nhau: Ví dụ một hình ảnh con mèo bị tô đen mặt, máy sẽ biết phần đen không phải là mặt con chó. Bạn có thể điều chỉnh model để máy dự đoán hình ảnh pet là con vật gì thay vì chỉ sửa chữa hình ảnh như nếu ở VD trên.\
+Bước cuối cùng, tập dữ liệu được gán nhãn được tinh chỉnh: mô hình biết hình ảnh mèo, chó và các con pet khác như nào. Ta sẽ chỉ cần mapping giữa các loài máy đã biết với các label mà chúng ta muốn là được.
+
+Một số người coi **self-supervised learning** là một phần của **unsupervised learning** khi chúng làm việc với dataset không được label. Nhưng **self-supervised learning** sử dụng các data có labels tự tạo trong quá trình training, nên thực chất việc này gần với **supervised learning** hơn. \
+Và định nghĩa **unsupervised learning** khi làm các task như ***clustering***, ***dimensionality reduction*** hoặc ***anomaly detection***. Trong khi **self-supervised learning** tập trung làm các task giống **supervised learning** hơn: ***classification*** and ***regression***. Tóm lại, tốt nhất chúng ta vẫn nên xem **self-supervised learning** là một mục riêng biệt.
+
+#### Reinforcement learning
+Trong **Reinforcement learning**, model được gọi là ***agent*** được đặt trong một môi trường và thực hiện một số actions khác nhau. Máy sẽ được ***rewards*** khi làm đúng và ***penalties*** khi làm sai. Nó sẽ tự học và thử đi thử lại. Cuối cùng máy đưa ra chiến lược tốt nhất, gọi là ***policy*** để nhận reward lớn nhất qua thời gian. Một policy được định nghĩa khi action mà agent nên chọn trong một tình huống cụ thể.\
+![alt text](image-12.png)\
+Ví dụ, **Reinforcement learning** hay sử dụng cho các robot để học cách đi. Hay một ví dụ rất nổi tiếng là DeepMind’s AlphaGo. Alphago chiến thắng Ke Jie, lúc ông đang là kiện tướng cờ vây số 1 thế giới, thông qua việc tự phân tích và tự chơi hàng ngàn games cờ vây khác nhau. Đặc biệt, máy chỉ sử dụng policy đã học và tắt phần learning khi đấu với Ke Jie. Đây là ***offline learning*** và sẽ được đề cập trong phần tiếp theo của bài.
+
