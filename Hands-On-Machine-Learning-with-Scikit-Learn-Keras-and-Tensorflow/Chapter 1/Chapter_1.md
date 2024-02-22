@@ -109,3 +109,84 @@ Trong **Reinforcement learning**, model được gọi là ***agent*** được 
 ![alt text](image-12.png)\
 Ví dụ, **Reinforcement learning** hay sử dụng cho các robot để học cách đi. Hay một ví dụ rất nổi tiếng là DeepMind’s AlphaGo. Alphago chiến thắng Ke Jie, lúc ông đang là kiện tướng cờ vây số 1 thế giới, thông qua việc tự phân tích và tự chơi hàng ngàn games cờ vây khác nhau. Đặc biệt, máy chỉ sử dụng policy đã học và tắt phần learning khi đấu với Ke Jie. Đây là ***offline learning*** và sẽ được đề cập trong phần tiếp theo của bài.
 
+### Batch Versus Online Learning
+Một chỉ tiêu dùng để phân biệt ML systems là liệu system có tự động học từ một luồng dữ liệu đầu vào không.
+#### Batch learning
+Trong ***Batch learning***, hệ thống không tự động học: nó sẽ được train với toàn bộ available data. Điều này sẽ tốn nhiều thời gian và tài nguyên máy tính, vì vây nó thường thực hiện offline. Đầu tiên, hệ thống sẽ được train, sau đó khi nó lên môi trường production thì máy sẽ chạy mà không học thêm nữa mà chỉ áp dụng những thứ nó đã được học. Đây gọi là ***offline learning***.\
+Một điều đương nhiên, performance của model sẽ có xu hướng giảm dần qua thời gian đơn giản bởi vì thế giới liên tục thay đổi trong khi mô hình không thay đổi gì cả. Hiện tượng này còn gọi là ***model rot*** hay ***data drift***.
+
+Giải pháp cho việc này là ta cần retrain model thường xuyên đến up-to-date data. Việc này tùy thuộc vào bài toán bạn đang sử dụng: chẳng hạn nếu mô hình của bạn phân biệt chó và mèo, performance sẽ giảm chậm hơn, tuy nhiên nếu phải làm bài toán có data thay đổi liên tục như dự đoán thị trường chứng khoán chẳng hạn, performance sẽ giảm xuống rất nhanh.\
+Nếu bạn muốn hệ thống batch learning biết được data mới (như 1 loại spam mới chảng hạn), bạn cần train một version mới cho hệ thống từ full dataset (***không phải chỉ data mới mà phải toàn bộ data***), và replace model cũ bằng 1 cái mới. Dĩ nhiên quá trình training, evaluating và launching một model ML mới có thể dễ dàng thực hiện tự động được. \
+Vậy nên, một ***batch learning system*** có thể thay đổi bằng cách đơn giản là update data và retrain lại thường xuyên theo tần suất tùy theo yêu cầu bài toán.
+
+Giải pháp này khá đơn giản và thực hiện tốt, tuy nhiên training full dataset bao giờ cũng tốn nhiều giờ chạy và chúng ta chỉ nên thực hiện cách ngày hoặc thậm chí là cách tuần. Tuy nhiên nếu mô hình cần giải quyết bài toán mà data thay đổi nhanh như chứng khoán, ta cần một giải pháp linh hoạt hơn.\
+Một điều cần chú ý thêm là training full dataset yêu cầu rất nhiều tài nguyên máy tính. Nếu ra có rất nhiều data và để máy tự động train from scratch mỗi ngày, nó sẽ làm chúng ta mất nhiều tiền để thực hiện. Và nếu data quá lớn, nó có thể bất khả thi nếu sử dụng ***batch learning***. \
+Cuối cùng, nếu hệ thống cần khả năng tự học và có tài nguyên hạn chế (như app điện thoại), việc retrain một dataset siêu lớn tốn hàng giờ sẽ làm chậm quá trình đi rất nhiều.
+
+#### Online learning
+Trong ***Online learning***, chúng ta sẽ train system bằng cách cho hệ thống học tăng dần các ví dụ theo thứ tự, từng cá thể hoặc nhóm nhỏ gọi là ***minibatches***. Từng bước máy học rất nhanh và rẻ, system có thể học khi có một data mới đến.\
+![alt text](image-13.png)
+***Online learning*** phù hợp với các systems mà thay đổi dữ liệu nhanh chóng (VD như phát hiện một pattern mới trong chứng khoán). Nó cũng là 1 good option khi có tài nguyên máy tính hữu hạn, như model train trên một chiếc điện thoại.\
+Thêm nữa, ***Online learning*** sử dụng train models trên một tập dataset lớn mà không thế fit được trong memory của 1 máy (cái này còn gọi là ***out-of-core***). Thuật toán sẽ load một phần data, chạy các training steps và lặp lại quá trình đó cho đến khi chạy toàn bộ data.\
+![alt text](image-14.png)\
+Một param quan trọng trong ***online learning system*** là cách máy thích nghi với data thay đổi, gọi là ***learning rate***. Nếu ta set learning rate cao, system sẽ thích nghi rất nhanh với data thay đổi nhưng nó cũng xu hướng quên nhanh các data cũ. Ngược lại, nếu ta set learning rate thấp, máy sẽ học chậm hơn, bị ì hơn và ít nhạy cảm hơn sự thay đổi data mới.\
+Một thách thức lớn với ***online learning*** là bad data, có thể do một lỗi gì đó hoặc từ một ai đó hack hệ thống. Để giảm thiểu risk này, chúng ta cần monitor system cẩn trọng và nhanh chóng tắt chế độ learning rate nếu cần. 
+
+### Instance-Based Versus Model-Based Learning
+Một cách để phân loại ML systems này theo cách mà máy *generalize* - tức là cách mà máy đối mặt với dữ liệu mới mà không có trong dữ liệu train, cách chúng làm việc và cách thức như nào? Có một good performance trên tập training data là tốt, nhưng mục tiêu quan trọng hơn vẫn là dự đoán được những dữ liệu mới.
+#### Instance-based learning
+Một hình thức học đơn giản nhất là cách học thuộc lòng. Nếu chúng ta muốn tạo một filter spam như cách này, máy sẽ đánh dấu các emails giống hệt với các email mà người dùng đã đánh dấu trước đó. Cách này không tệ nhất nhưng chắc chắn cũng không phải tốt nhất.\
+Thay vì đánh dấu các emails giống hệt spam emails, spam filter của chúng ta có thể thiết kế để đánh dấu các emails gần giống với spam emails thôi. Điều này cần *measure of similarity* giữa các emails. Một cách đơn giản để tính là đếm số chữ giống nhau giữa emails. Máy sẽ đánh dấu là spam emails nếu emails có nhiều từ chung với các spam emails đã biết.\
+Đây gọi là ***instance-based learning***: máy sẽ học các ví dụ, sau đó xử lý các case mới dựa trên việc tính toán similarity khi so sánh với các VD đã học. \
+![alt text](image-15.png)
+
+#### Model-based learning and a typical machine learning workflow
+Một cách khác để generalize tập hợp ví dụ là build model từ các ví dụ và sử dụng model đó để dự đoán. Đây gọi là ***model-based learning***.
+![alt text](image-16.png)\
+Ví dụ, giả sử bạn muốn biết tiền có làm cho con người trở nên hạnh phúc không. Ta có thể sử dụng xem data trong bảng dưới sau.\ 
+![alt text](image-17.png)\
+TA sẽ plot dưới dạng sau:\
+![alt text](image-18.png)\
+Ta có thể dễ dàng thấy 1 trend ở đây. Dù data có một số điểm nhiễu, ta có thể thấy từ plot là sự hài lòng cuộc sống tỷ lệ thuận với GDP đầu người. Bước này gọi là ***model selection***: khi ta chọn một *linear model* sự hài lòng cuộc sống với 1 attribute, GDP đầu người\
+![alt text](image-19.png)\
+![alt text](image-20.png)\
+Trước khi bạn sử dụng model, ta cần xác định rõ param trong công thức tính model. Vậy làm sao để biết giá trị nào cho model có kết quả tốt nhất? Để trả lời câu hỏi này, bạn cần định nghĩa ***utility function*** (hoặc ***fitness function***) để tính toán xem model tốt đến mức nào, hoặc có thể định nghĩa ***cost function*** tính toán model tệ đến mức nào. \
+VD như linear regression model, chúng ta thường tính cost function thông qua tìm distances giữa giá trị model dự đoán với tập training (MSE, RMSE). Từ đó, ta có thể tính được giá trị param để model tốt nhất.\
+![alt text](image-21.png)\
+
+## Main Challenges of Machine Learning
+Tóm gọn lại, task chính của bạn sẽ là chọn model và train nó trên một tập data, và hai thứ có thể gặp vấn đề là *bad model* và *bad data*. \
+Hãy xem một số TH *bad data*
+### Insufficient Quantity of Training Data - Không đủ dữ liệu huấn luyện
+Trong thực tế, khi ta muốn dạy đứa trẻ một thứ gì đó, chẳng hạn quả tạo, chúng ta sẽ chỉ quả táo và nói với đứa trẻ. Có thể mất 1 hoặc 1 số lần lặp đi lặp lại, đứa trẻ sẽ có thể nhận ra được quả táo trong mọi hình dạng hay màu sắc.\
+Machine Learning không hẳn như thế: chúng cần rất nhiều data để thuật toán học và làm việc được chính xác kể cả ta làm bài toán đơn giản hoặc phức tạp. 
+### Nonrepresentative Training Data - Tập training data không có tính đại diện
+Để generalize tốt, một điều quan trọng là tập training data cần có tính đại diện cho các case mới mà chúng ta muốn generalize. Điều này đúng cho cả khi dùng ***instance-based learning*** hay ***model-based learning***.\
+Ví dụ, tập hợp quốc gia mà bạn sử dụng trước đó cho việc training linear model không perfectly representative; tức không có quốc gia mà GDP đầu người dưới `$23,500` hoặc cao hơn `$62,500`. \
+![alt text](image-22.png)\
+Nếu ta train model dựa trên data này thì ta sẽ có đường thẳng, trong khi với data cũ (không có các ô vuông đó) thì model sẽ theo đường chấm. Ta có thể dễ dàng nhận ra việc thêm một số điểm dữ liệu quốc gia sẽ làm thay đổi rất nhiều hình dạng model. Và bạn có thể nhận ra là một simple linear model sẽ thường không bao giờ hoạt động tốt.\
+Tóm lại, việc không sử dụng tập training set có tính dại diện sẽ làm việc bạn train model dự đoán các kết quả không chính xác và sai lệch nhiều.
+
+Tuy vậy, việc lựa chon training set có tính representative khó hơn tưởng tượng: nếu dataset quá nhỏ, bạn có thể bị ***sampling noise*** (dữ liệu không đại diện do sự cố như outlier) hoặc kể cả dataset lớn cũng có thể không mang tính representative nếu phương pháp sampling lỗi. Đây gọi là ***sampling bias***.\
+Sách đưa một ví dụ nổi tiếng về ***sampling bias*** khi nói về cuộc bầu cử tổng thống Mỹ giữa Landon vs Roosevelt. Tờ báo Literary Digest làm một cuộc khảo sát lớn bằng cách gửi mail cho 10 triệu người hỏi ai là người chiến thắng. có 2.4 triệu người trả lời và dự đoán 57% người vote cho Landon. Nhưng thực tế Roosevelt thắng với 62% vote. Tại sao lại vậy? Đó là do phương pháp sampling của Literary Digest bị lỗi:
+ - Đầu tiên, khi Literary Digest khi thu thập địa chỉ để làm poll, báo đã sử dụng danh bạ điện thoại, danh sách độc giả, danh sách thành viên các CLB hay tương tự. Danh sách thường sẽ là những người giàu có, mang xu hướng theo Đảng Cộng hóa (ủng hộ Landon)
+ - Thứ hai, dưới 25% người được hỏi có câu trả lời. Những người này có thể k quan tâm chính trị, không thích tờ báo hoặc các nhóm khác và phần lớn trong số này lại thích Roosevelt. Đây là một dạng đặc biệt của ***sampling bias*** là ***nonresponse bias***.
+ - 
+### Poor-Quality Data - Data không chất lượng
+Dĩ nhiên, khi data không chất lượng như đầy lỗi, outliers hay nhiễu,... system sẽ rất khó khăn trong việc detect các patterns không rõ ràng và hoạt động không tốt như kỳ vọng. Chính vì vậy, việc dành thời gian clean data là vô cùng quan trọng. Thực tế là, hầu hết DS sử dụng phần lớn thời gian của mình để làm công việc này.\
+- Nếu có một số instances nào là outliers, đơn giản là loại bỏ hoặc fix chúng thủ công.
+- Nếu có một số instances là thiếu dữ liệu (VD như 5% người không điền tuổi), ta phải quyết định xem ta bỏ attribute đó, bỏ các instances đó, fillna chúng hay train một model có feature vs model không có feature đó.
+
+### Irrelevant Features - Features không liên quan
+Như câu nói phổ biến "garbage in, garbage out", ta sẽ chỉ có model tốt khi tập training data có đủ các features cần thiết và không có quá nhiều các features không liên quan. Một phần quan trọng trong sự thành công một dự án ML là có được 1 tập features tốt để train. Quá trình này gọi là ***feature engineering***, bao gồm:
+- ***Feature selection***: Lựa chọn các features tốt trong các features 
+- ***Feature extraction***: Kết hợp các features thành 1 feature có ích cho model, VD như thuật toán dimensionality reduction đã đề cập ở trên
+- Tạo feature mới bằng cách thu thập thêm data
+
+Bây giờ chúng ta sẽ xem một số VD về ***bad model***
+### Overfitting the Training Data
+Giả sử bạn đến một quốc gia, bạn vô tình gặp phải một ông tài xế lừa đảo và nói rằng mọi tài xế đất nước này đều là lừa đảo. Overgeneralizing là một điều con người hay mắc phải và máy cũng có thể dính bẫy này nếu ta không cẩn thận.\
+Đó là ***overfitting***, khi model perform tốt trên tập training data nhưng thực chất nó không generalize tốt. \
+Dưới đây là 1 VD về một mô hình phức tạp về mức hài lòng cuộc sống người dân và model bị overfit quá mức. Kế cả khi chúng tốt hơn một simple linear model thì liệu chúng ta có thể tin tưởng được kết quả predict của chúng không?\
+![alt text](image-23.png)\
+
