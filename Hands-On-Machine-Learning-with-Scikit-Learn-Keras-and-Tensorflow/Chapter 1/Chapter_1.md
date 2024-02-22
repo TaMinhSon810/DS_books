@@ -1,7 +1,5 @@
 # CHAPTER 1: The Machine Learning Landscape
 
-## Day 1 (20/2/2024)
-
 Bài đặt ra vấn đề khi hỏi **Machine Learning** chính xác là gì? Việc một machine mà learn something nghĩa là gì? Liệu tải một kho dữ liệu như Wiki về máy tính, máy tính có thể "learn" được không?
 ## What is Machine Learning?
 
@@ -73,7 +71,6 @@ Ví dụ, chiều rộng và chiều dài của nhà merge thành diện tích; 
 ![alt text](image-8.png)\
 Một tip sách đề cập là nên reduce số lượng dimensions thông qua dùng ***dimensionality reduction*** trước khi cho vào một thuật toán ML nào. Việc giảm dimensions sẽ giúp ta giữ các dimensions có ảnh hưởng lớn, từ đó giúp máy chạy nhanh hơn, tốn ít memory hơn và cũng perform tốt hơn nữa.
 
-## Day 2 (21/2/2024)
 Một task cũng liên quan mà sách đề cập là ***anomaly detection***. \
 Ví dụ: Phát hiện giao dịch bất thường để ngăn chặn gian lận, phát hiện lỗi sản phẩm hay tự động loại bỏ các outliers trong dataset trước khi cho học thuật toán. \
 Trong quá trình training, hệ thống sẽ được học hầu hết là các instance bình thường và máy sẽ học để nhận biết chúng. Và sau đó khi nhìn một instance mới, máy có thể nói liện instance này là bình thường hay bất thường.\
