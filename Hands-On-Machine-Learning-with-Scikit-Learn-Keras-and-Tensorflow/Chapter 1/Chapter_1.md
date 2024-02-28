@@ -186,4 +186,13 @@ Giả sử bạn đến một quốc gia, bạn vô tình gặp phải một ôn
 Đó là ***overfitting***, khi model perform tốt trên tập training data nhưng thực chất nó không generalize tốt. \
 Dưới đây là 1 VD về một mô hình phức tạp về mức hài lòng cuộc sống người dân và model bị overfit quá mức. Kế cả khi chúng tốt hơn một simple linear model thì liệu chúng ta có thể tin tưởng được kết quả predict của chúng không?\
 ![alt text](image-23.png)\
+Các models phức tạp như Deep Neural Networks có thể phát hiện được các patterns khó thấy trong data. Nhưng nếu tập training quá nhỏ hoặc quá nhiều nhiễu, do toàn sampling noise thì model sẽ khả năng phát hiện patterns trong bản thân nhiễu (Như ví dụ taxi driver).\
+Và dĩ nhiên, model sẽ không generalize theo các instances mới. \
+Ví dụ, bạn đưa cho life satisfaction model nhiều attributes, bao gồm những thông tin không hữu ích lắm như tên quốc gia. Trong trường hợp này, một model phức tạp có thể phát hiện patterns kiểu như các quốc gia trong tập train có *w* trong tên có life satisfaction > 7: New Zealand (7.3), Norway (7.6), Sweden (7.3),
+and Switzerland (7.5). Và nếu bạn dự đoán các quốc gia như Rwanda or Zimbabwe, bạn nghĩ model của bạn có thể dự đoán đúng nếu dùng theo pattern chữ *w* trong tên không?\
+Sách cũng đưa ra một số solutions khi xử lý overfitting:
+- Đơn giản hóa model bằng cách chọn mô hình ít tham số hơn, bằng cách giảm các features hoặc ràng buộc mô hình.
+- Thu thập nhiều dữ liệu training hơn.
+- Giảm nhiễu trong tập training data (như fix data lỗi hay loại outliers)
 
+Việc ràng buộc mô hình (constraning the model) sẽ làm đơn giản hóa và giảm thiểu rủi ro overfitting, được gọi là ***regularization***. Ví dụ,  θ and θ
