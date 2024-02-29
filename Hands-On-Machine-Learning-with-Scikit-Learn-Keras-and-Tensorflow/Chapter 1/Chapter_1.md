@@ -195,4 +195,19 @@ Sách cũng đưa ra một số solutions khi xử lý overfitting:
 - Thu thập nhiều dữ liệu training hơn.
 - Giảm nhiễu trong tập training data (như fix data lỗi hay loại outliers)
 
-Việc ràng buộc mô hình (constraning the model) sẽ làm đơn giản hóa và giảm thiểu rủi ro overfitting, được gọi là ***regularization***. Ví dụ,  θ and θ
+Việc ràng buộc mô hình (*constraning the model*) sẽ làm đơn giản hóa và giảm thiểu rủi ro overfitting, được gọi là ***regularization***. \
+Ví dụ, θ0 và θ1 là hai param trong linear model chúng ta nói ở trên. Điều này đưa cho thuật toán hai *degrees of freedom* để thay đổi model phù hợp với tập training data: thay đổi cả chiều cao (θ0) và độ dốc (θ1). \
+Nếu ta cho θ1 = 0, thuật toán chỉ có 1 *degrees of freedom* và sẽ khó khăn hơn để có model fitting data chính xác: tất cả những gì chúng ta có thể làm là move the line up and down sao gần nhất với training instances, vì vậy chúng sẽ thường xoay quanh mean. \
+Nếu ta cho thuật toán modify θ1 nhưng buộc cho nó phải nhỏ, thuật toán sẽ hiệu quả giữa one and two degrees of freedom. Nó sẽ đưa ra một model đơn giản hơn model có 2 degrees of freedom nhưng phức tạp hơn model chỉ có 1 degree of freedom. \
+-> Chúng ta có thể tìm được điểm cân bằng chính xác giữa việc fitting training data và giữ model đơn giản đủ để generalize tốt.\
+![alt text](image-24.png)\
+***Regularization*** có thể được áp dụng trong quá trình học và kiểm soát thông qua *hyperparameter*. Một *hyperparameter* là param của việc learning algorithm (chứ không phải của model). Như vậy, chúng không bị ảnh hưởng bởi bản thân việc learning algorithm, chúng phải được set trước khi training và phải remains constant trong quá trình training.\
+Nếu set quá cao, đô dốc sẽ sát về 0 và bạn sẽ ddược một flat model. Việc learning algorithms gần như sẽ không overfit data nhưng đó không phải laf một ý tưởng hay. Việc tuning là một phần quan trọng trong việc building ML system.
+### Underfitting the Training Data
+***Underfitting*** ngược lại ***Overfitting***: điều này xuất hiện khi model quá đơn giản để học tập training data.\
+Ví dụ, một linear model về life satisfaction dễ bị underfit, thực tế thì luôn phức tạp hơn model và predictions sẽ không chính xác, kể cả với tập test.\
+Một số cách sách đưa để tránh underfit:
+- Chọn model mạnh hơn, với nhiều params
+- Cho model các features tốt hơn để học (feature engineering)
+- Giảm constrains model (ví dụ giảm regularization hyperparameter)
+
