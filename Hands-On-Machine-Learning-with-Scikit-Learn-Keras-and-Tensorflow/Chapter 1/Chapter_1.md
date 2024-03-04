@@ -211,3 +211,38 @@ Một số cách sách đưa để tránh underfit:
 - Cho model các features tốt hơn để học (feature engineering)
 - Giảm constrains model (ví dụ giảm regularization hyperparameter)
 
+### Stepping Back
+Bài có review lại một số ý mà chúng ta đã học:
+- Machine Learning là về việc giúp máy hoạt động tốt hơn trong các task bằng cách học data, thay vì viết code theo một số rules nhất định.
+- Có rất nhiều ML systems khác nhau. supervised hay không, batch hay online, instance-based hay model-based
+- Trong một dự án ML, bạn thu thập data vào training set, và cần cho tập này vào learning algorithm. Nếu thuật toán là model-based, ta cấn tune các params để fit các model vơí tập training và mong máy có thể dự đoán tốt với các instances mới. Nếu thuật toán là instance-based, máy chỉ học thuộc và generalize instances mới bằng cách tính toán similarity khi so sánh với các instances đã học trước đó.
+- Hệ thống sẽ không hoạt động tốt nếu tập training quá nhỏ, hoặc data không mang tính đại diện (representative), hoặc nhiễu, hoặc bị ảnh hưởng bởi những features không tốt.
+- Cuối cùng, model cần vừa không quá đơn giản (có thể gây underfit) và không quá phức tạp (có thể gây overfit)
+Một khi chúng ta train model, chúng ta không thể chỉ mong chúng sẽ dự đoán instances mới tốt được. Chúng ta sẽ muốn evaluate và fine-tune nếu cần thiếu. Điều này sẽ được cover trong phần kế tiếp
+
+## Testing and Validating
+Cách duy nhất để biết liệu model có generalize các cases mới không là cho model dự đoán các case mới. Một cách để thực hiện là cho model của bạn vào production và theo dõi hiệu suất. Phương pháp này tốt, tuy nhiên nếu model quá tệ, users cuả bạn sẽ complain và chắc chắn đây không phải best idea.\
+Một option tốt hơn là split data thành 2 tập: *training set* và *testing set*. Và như tên thuật ngữ, bạn train model của bạn bằng cách sử dụng tập training, và test chúng bằng tập testing. Phần trăm đoán sai các case mới là *generalization error* (hoặc còn gọi là *out-of-sample error*), và bằng việc đánh giá model trên tập test, bạn sẽ có thể tính toán được chỉ số error này. Giá trị này sẽ nói cho bạn là model sẽ hoạt động như nào trên các instances mới mà bạn chưa thấy.\
+Nếu *training error* thấp (model có ít lỗi sai trong tập training) nhưng *generalization error* cao, nó có nghiã là model đang bị overfitting.
+### Hyperparameter Tuning and Model Selection
+Evaluating model đơn giản đó là: sử dựng tập test. Nhưng giả sử bạn ngần ngại và phân vân giữa 2 models như linear model và polynomial model chẳng hạn. Bạn sẽ chọn model nào?\
+Một option dễ thấy là train cả 2 và so sánh liệu chúng generalize khi sử dụng tập test như thế nào.\
+Bây giờ, giả sử linear model generalize tốt hơn, bạn sẽ muốn áp dụng một số regularization để tránh overfitting. Câu hỏi bấy giờ sẽ là, làm thế nào để bạn chọn giá trị regularization hyperparameter? \
+Một option là train 100 model khác nhau sử dụng 100 giá trị hyperparameters khác nhau. Giả sử bạn tìm được giá trị best hyperparameter với model có ***generalization error*** nhỏ nhất - coi là 5% chẳng hạn. Bạn đưa model lên môi trường production, và không may mắn thay model không hoạt động tốt như tưởng tượng và có 15% lỗi. Vậy điều gì đã xảy ra?\
+Vấn đề ở đây là bạn tính chỉ số *generalization error* rất nhiều lần trên tập test, và bạn chỉnh model cũng như hyperparameters để có model tốt nhất cho bộ data nhát định. Nó cũng có nghĩa là model có vẻ không hoạt động tốt với những data mới.\
+Một solution phổ biến cho vấn đề này đó là ***holdout validation***: bạn đơn giản là giữ một phần trong tập training để đánh giá một số models bạn phân vân và lựa chọn model tốt nhất. Cái tập mới mà bạn giữ lại gọi là tập validation. \
+Cụ thể hơn, bạn train models với các hyperparameters khác nhau trên tập training đã loại trừ tập validation, và bạn chọn model tốt nhất phù hợp với tập validation. Sau quá trình holdout validation, bạn sẽ train best model với full tập training và nó sẽ đưa model cuối cùng. Cuối cùng, bạn đánh giá model cuối cùng dựa trên tập test để uớc tính generalization error.
+
+![alt text](image-25.png)
+
+Giải pháp này thường hoạt động khá tốt. Tuy nhiên, nếu tập validation quá nhỏ, đánh giá model sẽ không chính xác: bạn có thể vô tình chọn phải một model không tôí ưu. Ngược lại, nếu tập validation quá lớn, tập training còn lại quá nhỏ so với toàn bộ tập training. Tại sao nó lại tệ? Lý do bởi vì final model được train với toàn tập training, nên rõ ràng không phải là một idea lý tưởng khi so sánh các models được train trong một tập training nhỏ hơn nhiều. \
+Một cách để giải quyết vấn đề này là ***cross-validation***, bằng cách sử dụng nhiều dataset nhỏ khác nhau. Từng model sẽ được đánh giá một lần trên tập validation sau khi đã train trên tập training. Bằng cách đo lường trung bình các đánh giá mô hình, bạn sẽ đánh giá được hiệu suát tốt hơn nhiều. Một nhược điểm duy nhất đó là thời gian training sẽ bị nhân lên theo số lượng tập validation.
+### Data Mismatch
+Trong một số trường hợp, ta dễ dàng để có một lượng lớn data cho training, nhưng data này có thể không hoàn toàn đại diện data sử dụng trong production. \
+Ví dụ, giả sử bạn tạo ra một mobile app để chụp ảnh hoa và tự động đoán được loại hoa. Bạn có thể dễ dàng download hàng triệu ảnh hoa trên webs, nhưng chúng sẽ không thể đại diện hoàn toàn những bức ảnh chúng ta chụp bằng điện thoại. Giả dụ bạn có 1000 bức ảnh chụp qua mobile app.\
+Với trường hợp này, điều quan trọng nhất cần nhớ đó là cả tập validation và tập test phải đại điện data mà bạn kỳ vọng sử dụng trong production nhiều nhất có thể. Vì vậy, chúng nên bao gồm các hình ảnh đại diện: bạn có thể xáo trộn nó và chia một nửa vào tập validation và nửa còn lại là tập test. \
+Sau khi training model dựa ảnh trên web, nếu bạn thấy performance model trên tập validation quá tệ, bạn sẽ không thể biết là do model overfit tập training hay do có mismatch giữa ảnh web và ảnh qua điện thoại.\
+Một solution đưa ra là giữ 1 tập ảnh training từ web gọi là tập ***train-dev***. Sau khi model train (trong tập training, không phải là tập train-dev), bạn có thể đánh giá trên tập train-dev. Nếu model tệ, model bị overfitting. Còn nếu model perform tốt, bạn tiếp tục đánh giá trên tập dev. \
+Nếu nó tệ, vấn đề đến từ data mismatch. Bạn phải thử giải quyết vấn đề thông qua preprocessing hình ảnh web sao giống ảnh từ điện thoại hơn, và retrain model laị. \
+Một khi model perform tốt trên tập train-dev và tập dev, bạn đánh giá lần cuối trên tập test để thấy model hoạt động như nào trong production.\
+![alt text](image-26.png)\
