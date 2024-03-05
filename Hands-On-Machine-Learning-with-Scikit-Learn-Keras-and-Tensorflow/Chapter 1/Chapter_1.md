@@ -138,7 +138,7 @@ Thay vì đánh dấu các emails giống hệt spam emails, spam filter của c
 ![alt text](image-15.png)
 
 #### Model-based learning and a typical machine learning workflow
-Một cách khác để generalize tập hợp ví dụ là build model từ các ví dụ và sử dụng model đó để dự đoán. Đây gọi là ***model-based learning***.
+Một cách khác để generalize tập hợp ví dụ là build model từ các ví dụ và sử dụng model đó để dự đoán. Đây gọi là ***model-based learning***.\
 ![alt text](image-16.png)\
 Ví dụ, giả sử bạn muốn biết tiền có làm cho con người trở nên hạnh phúc không. Ta có thể sử dụng xem data trong bảng dưới sau.\ 
 ![alt text](image-17.png)\
