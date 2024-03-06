@@ -46,3 +46,30 @@ Rõ ràng việc này sẽ tốn rát nhiêù thời gian và nguồn lực, và
 Và với tất cả thông tin đó, bạn đã sẵn sàng cho việc thiết kế hệ thống. \
 Đầu tiên, bạn cần quyết định loại training supervision nào mà model bạn sẽ dùng? Đó là supervised, unsupervised, semi-supervised, self-supervised, hay reinforcement learning task? Và đó là classification task, a regression task hay cái gì khác? Bạn nên sử dụng batch learning hay online learning? Đó là những thứ chúng ta có thể tự trả lời trước khi bắt đầu làm.\
 Đây rõ ràng là một ***supervised learning*** task, do model này được train với các labeled examples (từng instances sẽ gắn với một expected output, ví dụ như tên quận gắn với giá nhà của quận đó). Đây là một ***regression*** task, do model được xây nhằm mục đích dự đoán giá trị. Đặc biệt hơn, đây là ***multiple regression***, do hệ thống sử dụng nhiều features để dự đoán. Đây cũng là ***univariate regression***, do ta chỉ dự đoán một giá trị đơn lẻ theo từng quận. Nếu bạn muốn dự đoán nhiều giá trị từng quận, đó sẽ là ***multivariate regression***. Cuối cùng, luồng dữ liệu không liên tục đến hệ thống cũng như không có nhu cầu việc dữ liệu thay đổi nhanh chóng, đồng thời data nhỏ đủ để fit với memory, vì vậy ***batch learning*** sẽ làm việc tốt.
+
+### Select a Performance Measure
+Step tiếp theo bạn cần làm là lựa chọn một performance measure. Một performance measure phổ biến cho các regression problems là Root Mean Square Error (RMSE). Chỉ số có ý tưởng dựa trên việc tính toán mức độ lỗi mà hệ thống mắc phải khi dự đoán, với trọng số gán cao hơn cho các lỗi lớn.\
+Dưới đây là công thức RMSE:\
+![alt text](image-2.png)\
+Dù RMSE thường được coi là một performance measure ưu tiên cho các regression tasks, tuy nhiên trong một số trường hợp, bạn nên sử dụng các cách đánh giá khác.\
+Ví dụ, data chúng ta có rất nhiều outlier districts. Trong trường hợp này, chúng ta có thể xem xét sử dụng Mean Absolute Error (MAE, còn gọi là Average Absolute Deviation):\
+![alt text](image-3.png)\
+RMSE và MAE đều dùng để tính khoảng cách giữa 2 vector: vector điểm dự đoán và vector điểm giá trị target. Tuy nhiên:\
+![alt text](image-4.png)\
+Norm càng lớn, chỉ số sẽ càng tập trung vào các giá trị lớn mà bỏ qua các giá trị nhỏ. Chính vì vậy, RMSE nhạy cảm với outliers hơn MAE. Tuy nhiên, nếu outliers hiếm (như trong một bell-shaped curve) thì RMSE hoạt động khá tốt và thường được ưu tiên hơn.\
+### Check the Assumptions
+Cuói cùng, đó là một điều tốt khi list và verify các asssumptions đã được đưa ra từ trước đến nay. Điều này sẽ giúp bạn có thể phát hiện được các vấn đề nghiêm trọng sớm.\
+Ví dụ, giá nhà trong quận mà máy bạn predict ra được được đưa vào một ML system khác, và bạn đang giả định giá này đang sử dụng như vậy. Nhưng nếu như cái downstream system kia convert giá thành các categories (như "cheap", "medium" hay "expensive") và sử dụng các categories này thay vì bản thân các giá? \
+Trong trường hợp này, việc cố gắng lấy giá một cách hoàn hảo không thực sự hoàn toàn quan trọng; system chỉ cần xếp vào các categories cho đúng. Và nếu vậy, bài toán sẽ nên được đưa về một *classfication task*, thay vì *regression task*. Và rõ ràng bạn không muốn phát hiện điều này sau khi làm một regression system hàng tháng trời!\
+May mắn thay, sau khi làm việc cùng các team chịu trách nhiệm về downstream system, bạn tự tin là họ rất giá nhà dự đoán cuối cùng chứ không chỉ là phân vào các categories.
+## Get the Data 
+Bài hướng dẫn cơ bản về việc theo dõi và sử dụng code trong Google Collab. Trong phàn note này, theo dõi trong file ipynb được code cùng trong folder Chapter.
+### Take a Quick Look at the Data Structure
+Chúng ta sẽ bắt đầu với việc xem 5 dòng đầu tiên của data\
+![alt text](image-5.png)\
+Từng dòng biểu diễn từng quận. Ta có 10 attributes khác nhau: longitude, latitude, housing_median_age, total_rooms, total_bedrooms, population, households, median_income, median_house_value, and ocean_proximity.\
+Ta sử dụng tiếp info() để có một mô tả nhanh về data, cụ thể như số dòng, type, hoặc số lượng non-null values\
+![alt text](image-6.png)\
+Ta thấy có 20640 instances trong dataset, thực ra tập khá nhỏ so với tiêu chuẩn cho một mô hình học máy nhưng nó cũng khá hoàn hảo để chúng ta bắt đầu. Bạn có thể nhận ra là, cột total_bedrooms có 20433 non-null values, tức là có 207 quận đang missing dữ liệu. \
+Tất cả attributes là dạng *numerical*, ngoại trừ ocean_proximity. Cột này dạng *object*, vì vậy chúng có thể chứa bất cứ đối tượng nào trong Python. 
+
